@@ -10,7 +10,7 @@ RESOLUTION
 
 
 THEME
-- People we know
+- People we know fashioned in an endearing way
 
 ITEMS
 - weapons to start with
