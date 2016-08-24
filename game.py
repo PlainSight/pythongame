@@ -11,7 +11,7 @@ BUFFERSIZE = 2048
 serverAddr = '127.0.0.1'
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Hello World!')
+pygame.display.set_caption('Game')
 
 clock = pygame.time.Clock()
 
@@ -41,6 +41,16 @@ class Minion:
   def update(self):
     self.x += self.vx
     self.y += self.vy
+
+    if self.x > WIDTH - 50:
+      self.x = WIDTH - 50
+    if self.x < 0:
+      self.x = 0
+    if self.y > HEIGHT - 50:
+      self.y = HEIGHT - 50
+    if self.y < 0:
+      self.y = 0
+
     if self.id == 0:
       self.id = playerid
 
