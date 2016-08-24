@@ -8,35 +8,44 @@ WIDTH = 400
 HEIGHT = 400
 BUFFERSIZE = 2048
 
+serverAddr = '127.0.0.1'
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Hello World!')
 
 clock = pygame.time.Clock()
 
-thing = pygame.image.load('thing.png')
+if len(sys.argv) == 2:
+  serverAddr = sys.argv[1]
+
+sprite1 = pygame.image.load('images/BlueThing/BlueThing_front.png')
+sprite2 = pygame.image.load('images/Ladette/Ladette_front.png')
+sprite3 = pygame.image.load('images/TrashPanda/TrashPanda_front.png')
+sprite4 = pygame.image.load('images/Tubby/Tubby_front.png')
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('127.0.0.1', 4321))
+s.connect((serverAddr, 4321))
 
 playerid = 0
 
+sprites = { 0: sprite1, 1: sprite2, 2: sprite3, 3: sprite4 }
+
 class Minion:
-  def __init__(self, x, y):
+  def __init__(self, x, y, id):
     self.x = x
     self.y = y
     self.vx = 0
     self.vy = 0
-
-  def setPos(pos):
-    self.x = pos.x
-    self.y = pos.y
+    self.id = id
 
   def update(self):
     self.x += self.vx
     self.y += self.vy
+    if self.id == 0:
+      self.id = playerid
 
   def render(self):
-    screen.blit(thing, (self.x, self.y))
+    screen.blit(sprites[self.id % 4], (self.x, self.y))
 
 
 #game events
@@ -58,7 +67,7 @@ class GameEvent:
     self.vx = vx
     self.vy = vy
 
-cc = Minion(50, 50)
+cc = Minion(50, 50, 0)
 
 minions = []
 
@@ -74,7 +83,7 @@ while True:
       minions = []
       for minion in gameEvent:
         if minion[0] != playerid:
-          minions.append(Minion(minion[1], minion[2]))
+          minions.append(Minion(minion[1], minion[2], minion[0]))
     
   for event in pygame.event.get():
     if event.type == QUIT:
@@ -96,10 +105,11 @@ while True:
   screen.fill((255,255,255))
 
   cc.update()
-  cc.render()
 
   for m in minions:
     m.render()
+
+  cc.render()
 
   pygame.display.flip()
 
