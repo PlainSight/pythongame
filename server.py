@@ -1,6 +1,9 @@
 import socket
 import select
 import queue
+import random
+import pickle
+import time
 
 BUFFERSIZE = 512
 
@@ -11,14 +14,29 @@ listener.listen(10)
 incoming = [listener]
 outgoing = []
 
-messageQueue = queue.Queue()
+class Minion:
+  def __init__(self, ownerid):
+    self.x = 50
+    self.y = 50
+    self.ownerid = ownerid
+
+minionmap = {}
+
+def updateWorld(message):
+  arr = pickle.loads(message)
+  print(str(arr))
+  playerid = arr[1]
+  x = arr[2]
+  y = arr[3]
+
+  if playerid == 0: return
+
+  minionmap[playerid].x = x
+  minionmap[playerid].y = y
 
 try:
   while True:
-    messages = []
-
-    while messageQueue.empty() == False:
-      messages.append(messageQueue.get())
+    time.sleep(0.01)
 
     ins, outs, ex = select.select(incoming, outgoing, [])
     for i in ins:
@@ -28,21 +46,32 @@ try:
         print ('Connection address:' + addr[0] + " " + str(addr[1]))
         incoming.append(conn)
         outgoing.append(conn)
+        playerid = random.randint(1000, 1000000)
+        playerminion = Minion(playerid)
+        minionmap[playerid] = playerminion
+        conn.send(pickle.dumps(['id update', playerid]))
       else:
+        #error here
         data = i.recv(BUFFERSIZE)
         if data:
           #receieved data
-          print ('received data:' + data.decode('utf-8'))
-          messageQueue.put(data)
+          print ('received data:')
+          updateWorld(data)
           if i not in outgoing: 
             outgoing.append(i)
         else:
           #a disconnection
           outgoing.remove(i)
+          incoming.remove(i)
           i.close()
     for i in outs:
-      for m in messages:
-        i.send(m)
-        print ('sent data:' + m.decode('utf-8'))
+      update = ['player locations']
+
+      for key, value in minionmap.items():
+        update.append([value.ownerid, value.x, value.y])
+      
+      i.send(pickle.dumps(update))
+      print ('sent update data')
+      updates = False
 finally:
   listener.close()
