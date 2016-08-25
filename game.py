@@ -8,21 +8,19 @@ WIDTH = 400
 HEIGHT = 400
 BUFFERSIZE = 2048
 
-serverAddr = '127.0.0.1'
-
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Game')
 
 clock = pygame.time.Clock()
-
-if len(sys.argv) == 2:
-  serverAddr = sys.argv[1]
 
 sprite1 = pygame.image.load('images/BlueThing/BlueThing_front.png')
 sprite2 = pygame.image.load('images/Ladette/Ladette_front.png')
 sprite3 = pygame.image.load('images/TrashPanda/TrashPanda_front.png')
 sprite4 = pygame.image.load('images/Tubby/Tubby_front.png')
 
+serverAddr = '127.0.0.1'
+if len(sys.argv) == 2:
+  serverAddr = sys.argv[1]
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((serverAddr, 4321))
 
@@ -99,7 +97,6 @@ while True:
     if event.type == QUIT:
     	pygame.quit()
     	sys.exit()
-    if not hasattr(event, 'key'): continue
     if event.type == KEYDOWN:
       if event.key == K_LEFT: cc.vx = -10
       if event.key == K_RIGHT: cc.vx = 10

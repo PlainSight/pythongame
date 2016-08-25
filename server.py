@@ -1,7 +1,5 @@
 import socket
 import asyncore
-import select
-import queue
 import random
 import pickle
 import time
