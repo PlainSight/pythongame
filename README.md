@@ -17,3 +17,12 @@ ITEMS
 - ultimate weapon
 - health
 - snack shelf
+
+TODO
+- [ ] Create map datastructure and file format
+- [ ] Create tileset
+- [ ] Design environment layout
+- [ ] Design character abilities and weapons
+- [ ] Create rendering component which is discoupled from the game coordinate system
+- [ ] Set fixed tick rate on server
+- [ ] Handle disconnects properly
